@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Choose Your Avatar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 50px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            color: #ec4899;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+        }
+
+        .floating-buttons {
+            position: fixed;
+            top: 30px;
+            display: flex;
+            gap: 20px;
+            z-index: 999;
+        }
+
+        .floating-buttons.left {
+            left: 30px;
+        }
+
+        .icon-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .back-button:hover {
+            background: rgba(51, 65, 85, 1);
+            transform: scale(1.1);
+        }
+
+        .main-avatar-section {
+            text-align: center;
+            margin: 100px 0 50px;
+        }
+
+        .main-avatar-container {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .main-avatar-border {
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            padding: 5px;
+            box-shadow: 0 0 60px rgba(236, 72, 153, 0.6);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.6); }
+            50% { box-shadow: 0 0 80px rgba(236, 72, 153, 0.9); }
+        }
+
+        .main-avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #4c1d95, #1e3a8a);
+        }
+
+        .avatar-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 25px;
+            color: #fff;
+        }
+
+        .selection-section {
+            margin: 50px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+        }
+
+        /* Upload Section */
+        .upload-section {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px dashed rgba(236, 72, 153, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #ec4899;
+            background: rgba(30, 41, 59, 0.95);
+            transform: translateY(-5px);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            color: #cbd5e1;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtext {
+            font-size: 14px;
+            color: #94a3b8;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .avatar-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .avatar-option-border {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            border-radius: 25px;
+            border: 3px solid rgba(148, 163, 184, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .avatar-option:hover .avatar-option-border {
+            border-color: rgba(236, 72, 153, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .avatar-option.selected .avatar-option-border {
+            border-color: #ec4899;
+            border-width: 4px;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
+        }
+
+        .avatar-option-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 22px;
+        }
+
+        .avatar-option-name {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .avatar-option.selected .avatar-option-name {
+            color: #ec4899;
+        }
+
+        .continue-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            padding: 18px 60px;
+            border-radius: 20px;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .floating-buttons {
+                top: 15px;
+            }
+
+            .floating-buttons.left {
+                left: 15px;
+            }
+
+            .language-toggle {
+                top: 15px;
+                right: 15px;
+            }
+
+            .main-avatar-section {
+                margin: 80px 0 30px;
+            }
+
+            .main-avatar-container {
+                width: 220px;
+                height: 220px;
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 15px;
+            }
+
+            .upload-section {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="lang-btn active" onclick="changeLanguage('en')" id="langEn">EN</button>
+        <button class="lang-btn" onclick="changeLanguage('ar')" id="langAr">AR</button>
+    </div>
+
+    <div class="floating-buttons left">
+        <button class="icon-button back-button" onclick="goBack()">
+            ◀
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="main-avatar-section">
+            <div class="main-avatar-container">
+                <div class="main-avatar-border">
+                    <img id="mainAvatarImage" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4" alt="Selected Avatar" class="main-avatar-image">
+                </div>
+            </div>
+            <div class="avatar-name" id="avatarName" data-i18n="defaultAvatarName">Aang</div>
+        </div>
+
+        <div class="selection-section">
+            <!-- Upload Section -->
+            <div class="upload-section" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text" data-i18n="uploadTitle">Upload Your Photo</div>
+                <div class="upload-subtext" data-i18n="uploadSubtext">Click to browse or drag & drop your image</div>
+                <input type="file" id="fileInput" accept="image/*" onchange="handleFileUpload(event)">
+            </div>
+
+            <h2 class="section-title" data-i18n="chooseAvatarTitle">Or Choose a Pre-made Avatar</h2>
+
+            <div class="avatar-grid">
+                <div class="avatar-option selected" data-avatar="Aang" onclick="selectAvatar(this, 'Aang', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4" alt="Aang" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Aang</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Luna" onclick="selectAvatar(this, 'Luna', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=ffd5dc')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Luna&backgroundColor=ffd5dc" alt="Luna" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Luna</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Max" onclick="selectAvatar(this, 'Max', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Max&backgroundColor=c0aede')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Max&backgroundColor=c0aede" alt="Max" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Max</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Zara" onclick="selectAvatar(this, 'Zara', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Zara&backgroundColor=ffdfbf')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Zara&backgroundColor=ffdfbf" alt="Zara" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Zara</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Leo" onclick="selectAvatar(this, 'Leo', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Leo&backgroundColor=d1d4f9')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Leo&backgroundColor=d1d4f9" alt="Leo" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Leo</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Mia" onclick="selectAvatar(this, 'Mia', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&backgroundColor=b6e3f4')">
+                    <div class="avatar-option-border">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mia&backgroundColor=b6e3f4" alt="Mia" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Mia</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="continue-section">
+            <button class="continue-button" onclick="continueWithAvatar()">
+                <span data-i18n="continueButton">▶ Continue With</span> <span id="selectedAvatarName">Aang</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            ar: {
+                pageTitle: 'Aang - اختر أفاتارك',
+                defaultAvatarName: 'آنج',
+                uploadTitle: 'ارفع صورتك',
+                uploadSubtext: 'انقر للتصفح أو اسحب وأفلت صورتك',
+                chooseAvatarTitle: 'أو اختر أفاتار جاهز',
+                continueButton: '▶ متابعة مع'
+            },
+            en: {
+                pageTitle: 'Aang - Choose Your Avatar',
+                defaultAvatarName: 'Aang',
+                uploadTitle: 'Upload Your Photo',
+                uploadSubtext: 'Click to browse or drag & drop your image',
+                chooseAvatarTitle: 'Or Choose a Pre-made Avatar',
+                continueButton: '▶ Continue With'
+            }
+        };
+
+        let selectedAvatarData = {
+            name: 'Aang',
+            image: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4'
+        };
+
+        let currentLang = localStorage.getItem('appLanguage') || 'en';
+
+        // Initialize
+        window.onload = function() {
+            // Check if user is logged in
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+            updateLanguage();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('appLanguage', lang);
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            // Update HTML attributes
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.title = translations[currentLang].pageTitle;
+
+            // Update button states
+            document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+            document.getElementById('langAr').classList.toggle('active', currentLang === 'ar');
+
+            // Update translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    elem.textContent = translations[currentLang][key];
+                }
+            });
+
+            // Adjust upload section position for RTL
+            const floatingButtons = document.querySelector('.floating-buttons.left');
+            if (currentLang === 'ar') {
+                floatingButtons.style.left = 'auto';
+                floatingButtons.style.right = '30px';
+            } else {
+                floatingButtons.style.right = 'auto';
+                floatingButtons.style.left = '30px';
+            }
+        }
+
+        function selectAvatar(element, avatarName, avatarImage) {
+            // Remove selected class from all avatars
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // Add selected class to clicked avatar
+            element.classList.add('selected');
+
+            // Update main avatar display
+            document.getElementById('mainAvatarImage').src = avatarImage;
+            document.getElementById('avatarName').textContent = avatarName;
+            document.getElementById('selectedAvatarName').textContent = avatarName;
+
+            // Store selected avatar data
+            selectedAvatarData = {
+                name: avatarName,
+                image: avatarImage
+            };
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const uploadedImage = e.target.result;
+
+                    // Deselect all pre-made avatars
+                    document.querySelectorAll('.avatar-option').forEach(option => {
+                        option.classList.remove('selected');
+                    });
+
+                    // Update main avatar with uploaded image
+                    document.getElementById('mainAvatarImage').src = uploadedImage;
+                    const userName = sessionStorage.getItem('username') || 'You';
+                    document.getElementById('avatarName').textContent = userName;
+                    document.getElementById('selectedAvatarName').textContent = userName;
+
+                    // Store uploaded avatar
+                    selectedAvatarData = {
+                        name: userName,
+                        image: uploadedImage
+                    };
+
+                    // Show success message
+                    alert(currentLang === 'ar' ? 'تم رفع الصورة بنجاح! 🎉' : 'Image uploaded successfully! 🎉');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert(currentLang === 'ar' ? 'يرجى اختيار صورة صالحة' : 'Please select a valid image');
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'welcome.html';
+        }
+
+        function continueWithAvatar() {
+            // Save selected avatar to session storage
+            sessionStorage.setItem('selectedAvatar', selectedAvatarData.name);
+            sessionStorage.setItem('selectedAvatarImage', selectedAvatarData.image);
+            sessionStorage.setItem('selectedLanguage', currentLang);
+
+            // Redirect to chat page
+            window.location.href = 'chat.html';
+        }
+
+        // Drag and drop support
+        const uploadSection = document.querySelector('.upload-section');
+
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#ec4899';
+            uploadSection.style.background = 'rgba(236, 72, 153, 0.1)';
+        });
+
+        uploadSection.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = 'rgba(236, 72, 153, 0.5)';
+            uploadSection.style.background = 'rgba(30, 41, 59, 0.8)';
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = 'rgba(236, 72, 153, 0.5)';
+            uploadSection.style.background = 'rgba(30, 41, 59, 0.8)';
+
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const event = { target: { files: [file] } };
+                handleFileUpload(event);
+            }
+        });
+    </script>
+</body>
+</html>

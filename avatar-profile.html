@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Avatar Profile</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background Particles */
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float-particle 15s infinite ease-in-out;
+        }
+
+        @keyframes float-particle {
+            0%, 100% {
+                transform: translateY(0) translateX(0);
+                opacity: 0.3;
+            }
+            50% {
+                transform: translateY(-100px) translateX(50px);
+                opacity: 0.6;
+            }
+        }
+
+        /* Back Button */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Profile Container */
+        .profile-container {
+            text-align: center;
+            z-index: 10;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Avatar Display */
+        .avatar-circle {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 30px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 25px 80px rgba(118, 75, 162, 0.5);
+            }
+        }
+
+        .avatar-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(102, 126, 234, 0.2) 100%);
+        }
+
+        /* Avatar Name */
+        .avatar-name {
+            font-size: 42px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 25px;
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 50px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 35px;
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+            background: white;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Chat Button - Floating */
+        .chat-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.5);
+            transition: all 0.3s ease;
+            z-index: 100;
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chat-fab:hover {
+            transform: scale(1.15) !important;
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.7);
+        }
+
+        /* Upload Modal */
+        .upload-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .upload-modal.active {
+            display: flex;
+        }
+
+        .upload-content {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .upload-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        /* Avatar Gallery */
+        .avatar-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .avatar-option {
+            aspect-ratio: 1;
+            border-radius: 15px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+        }
+
+        .avatar-option:hover {
+            transform: scale(1.05);
+            border-color: #667eea;
+        }
+
+        .avatar-option.selected {
+            border-color: #764ba2;
+            box-shadow: 0 0 20px rgba(118, 75, 162, 0.5);
+        }
+
+        .avatar-option img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 20px;
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 25px;
+        }
+
+        .upload-area:hover {
+            background: rgba(102, 126, 234, 0.1);
+            border-color: #764ba2;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #666;
+        }
+
+        /* Modal Actions */
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .modal-btn.secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .avatar-circle {
+                width: 200px;
+                height: 200px;
+            }
+
+            .avatar-name {
+                font-size: 32px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .avatar-gallery {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Particles -->
+    <div class="particle" style="width: 60px; height: 60px; top: 10%; left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 80px; height: 80px; top: 60%; left: 80%; animation-delay: 2s;"></div>
+    <div class="particle" style="width: 40px; height: 40px; top: 80%; left: 20%; animation-delay: 4s;"></div>
+    <div class="particle" style="width: 100px; height: 100px; top: 20%; left: 70%; animation-delay: 1s;"></div>
+
+    <!-- Back Button -->
+    <button class="back-button" onclick="goBack()">←</button>
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <!-- Avatar Circle -->
+        <div class="avatar-circle">
+            <img id="avatarImage" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=800&fit=crop" alt="Avatar">
+            <div class="avatar-overlay"></div>
+        </div>
+
+        <!-- Avatar Name -->
+        <h1 class="avatar-name" id="avatarName">Aang</h1>
+
+        <!-- Status Badge -->
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>Online & Ready</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button class="action-btn" onclick="openUploadModal()">
+                <span>📸</span>
+                <span>Change Avatar</span>
+            </button>
+            <button class="action-btn" onclick="openSettings()">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Floating Chat Button -->
+    <button class="chat-fab" onclick="startChat()" title="Start Chat">
+        💬
+    </button>
+
+    <!-- Upload Modal -->
+    <div class="upload-modal" id="uploadModal">
+        <div class="upload-content">
+            <h2 class="upload-title">Choose Your Avatar</h2>
+
+            <!-- Avatar Gallery -->
+            <div class="avatar-gallery">
+                <div class="avatar-option selected" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" alt="Avatar 1">
+                </div>
+                <div class="avatar-option" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&h=200&fit=crop" alt="Avatar 2">
+                </div>
+                <div class="avatar-option" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1488161628813-04466f872be2?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2?w=200&h=200&fit=crop" alt="Avatar 3">
+                </div>
+                <div class="avatar-option" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200&h=200&fit=crop" alt="Avatar 4">
+                </div>
+                <div class="avatar-option" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop" alt="Avatar 5">
+                </div>
+                <div class="avatar-option" onclick="selectPresetAvatar(this, 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400&h=800&fit=crop')">
+                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=200&h=200&fit=crop" alt="Avatar 6">
+                </div>
+            </div>
+
+            <!-- Upload Custom -->
+            <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Or upload your own photo</div>
+            </div>
+            <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleFileUpload(event)">
+
+            <!-- Actions -->
+            <div class="modal-actions">
+                <button class="modal-btn secondary" onclick="closeUploadModal()">Cancel</button>
+                <button class="modal-btn primary" onclick="applyAvatar()">Apply</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAvatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=800&fit=crop';
+
+        // Load saved avatar on page load
+        window.onload = function() {
+            const savedAvatar = sessionStorage.getItem('selectedAvatarImage');
+            const savedName = sessionStorage.getItem('selectedAvatar') || 'Aang';
+
+            if (savedAvatar) {
+                document.getElementById('avatarImage').src = savedAvatar;
+                selectedAvatarUrl = savedAvatar;
+            }
+
+            document.getElementById('avatarName').textContent = savedName;
+        }
+
+        function openUploadModal() {
+            document.getElementById('uploadModal').classList.add('active');
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadModal').classList.remove('active');
+        }
+
+        function selectPresetAvatar(element, url) {
+            // Remove selected class from all
+            document.querySelectorAll('.avatar-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+
+            // Add selected class to clicked
+            element.classList.add('selected');
+            selectedAvatarUrl = url;
+        }
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    selectedAvatarUrl = e.target.result;
+                    alert('Photo uploaded successfully! Click "Apply" to use it. 🎉');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function applyAvatar() {
+            document.getElementById('avatarImage').src = selectedAvatarUrl;
+
+            // Save to session
+            sessionStorage.setItem('selectedAvatarImage', selectedAvatarUrl);
+
+            closeUploadModal();
+
+            // Success animation
+            const circle = document.querySelector('.avatar-circle');
+            circle.style.animation = 'none';
+            setTimeout(() => {
+                circle.style.animation = 'pulse 3s ease-in-out infinite';
+            }, 10);
+        }
+
+        function startChat() {
+            window.location.href = 'avatar-chat.html';
+        }
+
+        function openSettings() {
+            alert('Settings coming soon! ⚙️');
+        }
+
+        function goBack() {
+            window.location.href = 'welcome.html';
+        }
+    </script>
+</body>
+</html>

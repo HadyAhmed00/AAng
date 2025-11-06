@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 30px;
+            position: relative;
+        }
+
+        .back-button {
+            width: 50px;
+            height: 50px;
+            background: rgba(51, 65, 85, 0.8);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(51, 65, 85, 1);
+            transform: scale(1.1);
+        }
+
+        .language-badge {
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .avatar-section {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, transparent 100%);
+        }
+
+        .avatar-container {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .avatar-glow {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.4), transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.1); opacity: 0.9; }
+        }
+
+        .avatar-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(236, 72, 153, 0.6);
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.5);
+        }
+
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 18px 22px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .message.ai .message-content {
+            background: rgba(51, 65, 85, 0.8);
+            color: #e2e8f0;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .input-section {
+            background: rgba(30, 41, 59, 0.95);
+            padding: 20px;
+            border-top: 2px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .input-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .voice-button {
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .voice-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.6);
+        }
+
+        .voice-button.active {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            animation: voicePulse 1s ease-in-out infinite;
+        }
+
+        @keyframes voicePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .input-wrapper {
+            flex: 1;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            background: rgba(51, 65, 85, 0.6);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-radius: 25px;
+            padding: 5px 5px 5px 20px;
+            transition: all 0.3s ease;
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #ec4899;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .emoji-button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .emoji-button:hover {
+            transform: scale(1.2);
+        }
+
+        .message-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            padding: 12px 10px;
+            outline: none;
+        }
+
+        .message-input::placeholder {
+            color: #64748b;
+        }
+
+        .send-button {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.6);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 5px;
+            padding: 18px 22px;
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 20px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #94a3b8;
+            border-radius: 50%;
+            animation: typing 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+
+        .suggestions {
+            display: flex;
+            gap: 10px;
+            padding: 10px 20px;
+            overflow-x: auto;
+            max-width: 800px;
+            margin: 0 auto 10px;
+        }
+
+        .suggestions::-webkit-scrollbar {
+            height: 5px;
+        }
+
+        .suggestions::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.5);
+            border-radius: 10px;
+        }
+
+        .suggestion-chip {
+            background: rgba(51, 65, 85, 0.6);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            color: #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 20px;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .suggestion-chip:hover {
+            background: rgba(236, 72, 153, 0.3);
+            border-color: #ec4899;
+            transform: translateY(-2px);
+        }
+
+        /* Language Toggle */
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 50px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            color: #ec4899;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 15px 20px;
+            }
+
+            .avatar-container {
+                width: 140px;
+                height: 140px;
+            }
+
+            .avatar-image {
+                width: 120px;
+                height: 120px;
+            }
+
+            .message-content {
+                max-width: 85%;
+                padding: 15px 18px;
+                font-size: 15px;
+            }
+
+            .input-section {
+                padding: 15px;
+            }
+
+            .language-toggle {
+                top: 10px;
+                right: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="lang-btn active" onclick="changeLanguage('en')" id="langEn">EN</button>
+        <button class="lang-btn" onclick="changeLanguage('ar')" id="langAr">AR</button>
+    </div>
+    <div class="header">
+        <button class="back-button" onclick="goBack()">◀</button>
+        <div class="language-badge" id="languageBadge">EN</div>
+    </div>
+
+    <div class="avatar-section">
+        <div class="avatar-container">
+            <div class="avatar-glow"></div>
+            <img id="chatAvatar" src="" alt="Avatar" class="avatar-image">
+        </div>
+    </div>
+
+    <div class="suggestions" id="suggestions">
+        <div class="suggestion-chip" onclick="sendSuggestion('What is AI?')" data-i18n="suggestionAI">What is AI? 🤖</div>
+        <div class="suggestion-chip" onclick="sendSuggestion('How do computers learn?')" data-i18n="suggestionLearn">How do computers learn? 💡</div>
+        <div class="suggestion-chip" onclick="sendSuggestion('Tell me about neural networks')" data-i18n="suggestionNeural">Neural Networks 🧠</div>
+        <div class="suggestion-chip" onclick="sendSuggestion('What is machine learning?')" data-i18n="suggestionML">Machine Learning 📊</div>
+    </div>
+
+    <div class="chat-container" id="chatContainer">
+        <!-- Messages will be added here dynamically -->
+    </div>
+
+    <div class="input-section">
+        <div class="input-container">
+            <button class="voice-button" id="voiceButton" onclick="toggleVoice()">
+                🎤
+            </button>
+            
+            <div class="input-wrapper">
+                <button class="emoji-button" onclick="alert('Emoji picker coming soon! 😊')">
+                    💡
+                </button>
+                <input
+                    type="text"
+                    class="message-input"
+                    id="messageInput"
+                    data-i18n-placeholder="inputPlaceholder"
+                    placeholder="Ask me anything about AI..."
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-button" id="sendButton" onclick="sendMessage()">
+                    ➤
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            ar: {
+                pageTitle: 'Aang - محادثة',
+                suggestionAI: 'ما هو الذكاء الاصطناعي؟ 🤖',
+                suggestionLearn: 'كيف تتعلم الحواسيب؟ 💡',
+                suggestionNeural: 'الشبكات العصبية 🧠',
+                suggestionML: 'التعلم الآلي 📊',
+                inputPlaceholder: 'اسألني أي شيء عن الذكاء الاصطناعي...',
+                welcomeMessage: 'مرحباً! أنا {name}، رفيقك في الذكاء الاصطناعي! اسألني أي شيء عن الذكاء الاصطناعي وسأساعدك على التعلم بطريقة ممتعة! 🌟'
+            },
+            en: {
+                pageTitle: 'Aang - Chat',
+                suggestionAI: 'What is AI? 🤖',
+                suggestionLearn: 'How do computers learn? 💡',
+                suggestionNeural: 'Neural Networks 🧠',
+                suggestionML: 'Machine Learning 📊',
+                inputPlaceholder: 'Ask me anything about AI...',
+                welcomeMessage: "Hello! I'm {name}, your AI companion! Ask me anything about artificial intelligence and I'll help you learn in a fun way! 🌟"
+            }
+        };
+
+        let currentLang = localStorage.getItem('appLanguage') || 'en';
+
+        // AI responses database
+        const aiResponses = {
+            "what is ai": "AI, or Artificial Intelligence, is when computers and machines can think and learn like humans! Just like how you learn new things every day, AI systems can learn from data and experiences. They help us with many things like voice assistants, games, and even helping doctors! 🤖✨",
+            "what is deep learning": "Deep Learning architectures like Convolutional Neural Networks (CNNs) and Recurrent Neural Networks (RNNs) have revolutionized fields such as computer vision and natural language processing. It is particularly powerful in handling large datasets and complex problems such as image classification, speech recognition, and natural language understanding. 🧠",
+            "applications of ai": "AI is used in many cool ways! Virtual assistants like Siri and Alexa, recommendation systems on platforms like Netflix and Amazon, fraud detection in banking, self-driving cars, healthcare diagnostics, chatbots for customer service, and predictive maintenance in manufacturing. AI is also used in agriculture, logistics, finance, education, and more! 🌟",
+            "how do computers learn": "Computers learn through a process called machine learning! They look at lots of examples and find patterns, just like when you learn to recognize different animals by seeing many pictures of them. The more examples they see, the better they get! 📚",
+            "neural networks": "Neural networks are inspired by how our brains work! They have layers of connected nodes (like brain cells) that work together to solve problems. Each connection helps the network learn and make decisions, just like how your brain learns from experience! 🧠✨",
+            "machine learning": "Machine learning is a type of AI where computers learn from data without being explicitly programmed for every task. It's like teaching a computer to recognize cats by showing it thousands of cat pictures, instead of telling it exactly what a cat looks like! 🐱💻",
+            "default": "That's a great question! AI is all about making computers smart and helpful. Would you like to know more about how AI works, what it can do, or how you can learn more about it? 🤔✨"
+        };
+
+        let isVoiceActive = false;
+        let chatHistory = [];
+
+        // Initialize
+        window.onload = function() {
+            // Check if user is logged in
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Load avatar
+            const avatarImage = sessionStorage.getItem('selectedAvatarImage') || 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4';
+            const avatarName = sessionStorage.getItem('selectedAvatar') || 'Aang';
+
+            document.getElementById('chatAvatar').src = avatarImage;
+
+            // Update language
+            updateLanguage();
+
+            // Add welcome message
+            const welcomeMsg = translations[currentLang].welcomeMessage.replace('{name}', avatarName);
+            addMessage('ai', welcomeMsg);
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('appLanguage', lang);
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            // Update HTML attributes
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.title = translations[currentLang].pageTitle;
+
+            // Update button states
+            document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+            document.getElementById('langAr').classList.toggle('active', currentLang === 'ar');
+            document.getElementById('languageBadge').textContent = currentLang.toUpperCase();
+
+            // Update translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    elem.textContent = translations[currentLang][key];
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang][key]) {
+                    elem.placeholder = translations[currentLang][key];
+                }
+            });
+        }
+
+        function addMessage(type, content, time = null) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const avatarImage = type === 'ai' 
+                ? sessionStorage.getItem('selectedAvatarImage')
+                : 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%2306b6d4"/%3E%3Ctext x="50" y="65" text-anchor="middle" fill="white" font-size="40" font-weight="bold"%3E👤%3C/text%3E%3C/svg%3E';
+
+            const timeStr = time || new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                <img src="${avatarImage}" alt="${type}" class="message-avatar">
+                <div>
+                    <div class="message-content">${content}</div>
+                    <div class="message-time">${timeStr}</div>
+                </div>
+            `;
+
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Add to history
+            chatHistory.push({ type, content, time: timeStr });
+        }
+
+        function showTypingIndicator() {
+            const chatContainer = document.getElementById('chatContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator active';
+            typingDiv.id = 'typingIndicator';
+
+            const avatarImage = sessionStorage.getItem('selectedAvatarImage');
+            typingDiv.innerHTML = `
+                <img src="${avatarImage}" alt="AI" class="message-avatar">
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+
+            chatContainer.appendChild(typingDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function getAIResponse(userMessage) {
+            const messageLower = userMessage.toLowerCase();
+            
+            // Check for keyword matches
+            for (let key in aiResponses) {
+                if (messageLower.includes(key)) {
+                    return aiResponses[key];
+                }
+            }
+            
+            return aiResponses.default;
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (message === '') return;
+
+            // Add user message
+            addMessage('user', message);
+            input.value = '';
+
+            // Hide suggestions after first message
+            document.getElementById('suggestions').style.display = 'none';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response delay
+            setTimeout(() => {
+                hideTypingIndicator();
+                const aiResponse = getAIResponse(message);
+                addMessage('ai', aiResponse);
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function sendSuggestion(text) {
+            document.getElementById('messageInput').value = text;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function toggleVoice() {
+            const voiceButton = document.getElementById('voiceButton');
+            isVoiceActive = !isVoiceActive;
+
+            if (isVoiceActive) {
+                voiceButton.classList.add('active');
+                voiceButton.textContent = '⏸️';
+                // In a real app, this would start voice recognition
+                alert('Voice recording started! (Demo mode)');
+            } else {
+                voiceButton.classList.remove('active');
+                voiceButton.textContent = '🎤';
+            }
+        }
+
+        function goBack() {
+            window.location.href = 'avatar-selection.html';
+        }
+
+        // Auto-focus input on load
+        document.getElementById('messageInput').focus();
+    </script>
+</body>
+</html>

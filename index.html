@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang AI - Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .nav-container {
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            border-radius: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 50px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        h1 {
+            color: #fff;
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .nav-card {
+            background: rgba(51, 65, 85, 0.6);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .nav-card:hover {
+            transform: translateY(-5px);
+            border-color: #ec4899;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .nav-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .nav-title {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .nav-desc {
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .note {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: #93c5fd;
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 30px;
+            text-align: center;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container">
+        <div class="logo-section">
+            <div class="logo">✨</div>
+            <h1>Aang AI</h1>
+            <p class="subtitle">Choose a page to navigate</p>
+        </div>
+
+        <div class="nav-grid">
+            <a href="login.html" class="nav-card">
+                <div class="nav-icon">🔐</div>
+                <div class="nav-title">Login</div>
+                <div class="nav-desc">Sign in to your account</div>
+            </a>
+
+            <a href="signup.html" class="nav-card">
+                <div class="nav-icon">📝</div>
+                <div class="nav-title">Sign Up</div>
+                <div class="nav-desc">Create a new account</div>
+            </a>
+
+            <a href="welcome.html" onclick="bypassLogin(event, 'welcome.html')" class="nav-card">
+                <div class="nav-icon">👋</div>
+                <div class="nav-title">Welcome</div>
+                <div class="nav-desc">Introduction page</div>
+            </a>
+
+            <a href="avatar-selection-new.html" onclick="bypassLogin(event, 'avatar-selection-new.html')" class="nav-card">
+                <div class="nav-icon">🎨</div>
+                <div class="nav-title">Avatar Selection</div>
+                <div class="nav-desc">Choose or upload avatar</div>
+            </a>
+
+            <a href="interactive-avatar.html" onclick="bypassLogin(event, 'interactive-avatar.html')" class="nav-card">
+                <div class="nav-icon">🎭</div>
+                <div class="nav-title">Interactive Avatar</div>
+                <div class="nav-desc">Voice & interactive modes</div>
+            </a>
+
+            <a href="avatar-profile.html" onclick="bypassLogin(event, 'avatar-profile.html')" class="nav-card">
+                <div class="nav-icon">👤</div>
+                <div class="nav-title">Avatar Profile</div>
+                <div class="nav-desc">View and customize avatar</div>
+            </a>
+
+            <a href="avatar-chat.html" onclick="bypassLogin(event, 'avatar-chat.html')" class="nav-card">
+                <div class="nav-icon">🤳</div>
+                <div class="nav-title">Avatar Chat</div>
+                <div class="nav-desc">Full-screen avatar chat</div>
+            </a>
+
+            <a href="chat.html" onclick="bypassLogin(event, 'chat.html')" class="nav-card">
+                <div class="nav-icon">💬</div>
+                <div class="nav-title">Chat</div>
+                <div class="nav-desc">Talk with Aang AI</div>
+            </a>
+        </div>
+
+        <div class="note">
+            💡 <strong>Note:</strong> This is a navigation page for testing. Click any page to visit it directly without login checks!
+        </div>
+    </div>
+
+    <script>
+        function bypassLogin(event, page) {
+            event.preventDefault();
+
+            // Set logged in status
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('username', 'Test User');
+            sessionStorage.setItem('userType', 'child');
+
+            // Set default avatar
+            sessionStorage.setItem('selectedAvatar', 'Aang');
+            sessionStorage.setItem('selectedAvatarImage', 'https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4');
+
+            // Navigate to page
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1c2e 0%, #2d364c 50%, #3b4b6b 100%);
+            min-height: 100vh;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .avatar-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .avatar-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .language-toggle {
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 50px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: rgba(236, 72, 153, 0.2);
+            border-color: rgba(236, 72, 153, 0.5);
+            color: #fff;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 1em;
+            line-height: 1.5;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+            border-radius: 20px 20px 5px 20px;
+        }
+
+        .bot-message {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px 20px 20px 5px;
+        }
+
+        /* Input Area */
+        .input-area {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-container {
+            display: flex;
+            gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 15px 20px;
+            border-radius: 25px;
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .message-input:focus {
+            outline: none;
+            border-color: #ec4899;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .send-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.3);
+        }
+
+        .send-button svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(236, 72, 153, 0.5);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(236, 72, 153, 0.7);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .message {
+                max-width: 90%;
+            }
+
+            .header {
+                padding: 15px;
+            }
+
+            .avatar-image {
+                width: 40px;
+                height: 40px;
+            }
+
+            .avatar-name {
+                font-size: 1em;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message {
+                max-width: 95%;
+                font-size: 0.9em;
+            }
+
+            .input-area {
+                padding: 15px;
+            }
+
+            .message-input {
+                padding: 12px 15px;
+            }
+
+            .send-button {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="avatar-info">
+            <img id="avatar-img" src="" alt="Avatar" class="avatar-image">
+            <span id="avatar-name" class="avatar-name"></span>
+        </div>
+        <div class="language-toggle">
+            <button class="lang-btn active" onclick="changeLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="changeLanguage('ar')">عربي</button>
+        </div>
+    </div>
+
+    <div class="chat-container" id="chat-container"></div>
+
+    <div class="input-area">
+        <div class="input-container">
+            <input type="text" class="message-input" id="message-input" placeholder="Type your message..." data-en="Type your message..." data-ar="اكتب رسالتك...">
+            <button class="send-button" onclick="sendMessage()">
+                <svg viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="translations.js"></script>
+    <script>
+        let selectedAvatar = localStorage.getItem('selectedAvatar') || 'Aang';
+        
+        // Initialize avatar
+        document.getElementById('avatar-img').src = `https://api.dicebear.com/7.x/bottts/svg?seed=${selectedAvatar}&size=300`;
+        document.getElementById('avatar-name').textContent = selectedAvatar;
+
+        // Chat functionality
+        const chatContainer = document.getElementById('chat-container');
+        const messageInput = document.getElementById('message-input');
+
+        function addMessage(text, isUser = false) {
+            const message = document.createElement('div');
+            message.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            message.textContent = text;
+            chatContainer.appendChild(message);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function sendMessage() {
+            const text = messageInput.value.trim();
+            if (text) {
+                addMessage(text, true);
+                messageInput.value = '';
+                
+                // Simulate bot response
+                setTimeout(() => {
+                    const responses = [
+                        "I understand what you're saying.",
+                        "That's an interesting perspective.",
+                        "Let me think about that.",
+                        "Could you tell me more?",
+                        "I'm here to help you."
+                    ];
+                    const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                    addMessage(randomResponse, false);
+                }, 1000);
+            }
+        }
+
+        // Handle enter key
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function changeLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(lang)) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const elements = document.querySelectorAll('[data-en]');
+            elements.forEach(element => {
+                if (element.placeholder) {
+                    element.placeholder = element.getAttribute(`data-${lang}`);
+                } else {
+                    element.textContent = element.getAttribute(`data-${lang}`);
+                }
+            });
+
+            document.documentElement.setAttribute('lang', lang);
+            document.documentElement.setAttribute('dir', lang === 'ar' ? 'rtl' : 'ltr');
+        }
+
+        // Initialize language
+        const userLang = localStorage.getItem('language') || 'en';
+        changeLanguage(userLang);
+
+        // Add welcome message
+        setTimeout(() => {
+            addMessage(`Hi! I'm ${selectedAvatar}. How can I help you today?`, false);
+        }, 500);
+    </script>
+</body>
+</html>

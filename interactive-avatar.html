@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Interactive Avatar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: rise 15s infinite ease-in;
+        }
+
+        .bubble:nth-child(1) { width: 80px; height: 80px; left: 10%; animation-delay: 0s; }
+        .bubble:nth-child(2) { width: 40px; height: 40px; left: 20%; animation-delay: 2s; }
+        .bubble:nth-child(3) { width: 60px; height: 60px; left: 35%; animation-delay: 4s; }
+        .bubble:nth-child(4) { width: 100px; height: 100px; left: 50%; animation-delay: 0s; }
+        .bubble:nth-child(5) { width: 70px; height: 70px; left: 65%; animation-delay: 3s; }
+        .bubble:nth-child(6) { width: 50px; height: 50px; left: 80%; animation-delay: 6s; }
+        .bubble:nth-child(7) { width: 90px; height: 90px; left: 90%; animation-delay: 2s; }
+
+        @keyframes rise {
+            0% { bottom: -100px; transform: translateX(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { bottom: 110%; transform: translateX(100px); opacity: 0; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-button {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .language-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            color: white;
+        }
+
+        .lang-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            flex: 1;
+        }
+
+        /* Avatar Section */
+        .avatar-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin-bottom: 30px;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3), transparent);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .avatar-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 50px rgba(255, 255, 255, 0.3);
+        }
+
+        .avatar-name {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-status {
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            background: #4ade80;
+            border-radius: 50%;
+            animation: blink 2s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .avatar-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Interaction Section */
+        .interaction-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-modes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .mode-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .mode-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .mode-card.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+            border-color: white;
+        }
+
+        .mode-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .mode-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .mode-desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Voice Visualization */
+        .voice-visualizer {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 120px;
+            margin-bottom: 30px;
+        }
+
+        .voice-bar {
+            width: 8px;
+            background: white;
+            border-radius: 10px;
+            animation: wave 1s ease-in-out infinite;
+        }
+
+        .voice-bar:nth-child(1) { height: 20px; animation-delay: 0s; }
+        .voice-bar:nth-child(2) { height: 40px; animation-delay: 0.1s; }
+        .voice-bar:nth-child(3) { height: 60px; animation-delay: 0.2s; }
+        .voice-bar:nth-child(4) { height: 80px; animation-delay: 0.3s; }
+        .voice-bar:nth-child(5) { height: 60px; animation-delay: 0.4s; }
+        .voice-bar:nth-child(6) { height: 40px; animation-delay: 0.5s; }
+        .voice-bar:nth-child(7) { height: 20px; animation-delay: 0.6s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.3; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        .voice-visualizer.inactive .voice-bar {
+            animation: none;
+            height: 20px;
+            opacity: 0.3;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn {
+            width: 70px;
+            height: 70px;
+            border: none;
+            border-radius: 50%;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+        }
+
+        .mic-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.6);
+        }
+
+        .mic-btn.active {
+            background: linear-gradient(135deg, #fa709a, #fee140);
+            animation: pulse-mic 1s infinite;
+        }
+
+        @keyframes pulse-mic {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .stop-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .stop-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .avatar-container {
+                width: 250px;
+                height: 250px;
+            }
+
+            .avatar-image {
+                width: 230px;
+                height: 230px;
+            }
+
+            .interaction-modes {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="animated-bg">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <button class="back-button" onclick="goBack()">◀</button>
+            <div class="language-toggle">
+                <button class="lang-btn active" onclick="changeLanguage('en')" id="langEn">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('ar')" id="langAr">AR</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Avatar Section -->
+            <div class="avatar-section">
+                <div class="avatar-container">
+                    <div class="avatar-glow"></div>
+                    <img id="avatarImage" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Aang&backgroundColor=b6e3f4" alt="Avatar" class="avatar-image">
+                </div>
+
+                <div class="avatar-name" id="avatarName">Aang</div>
+                <div class="avatar-status">
+                    <span class="status-indicator"></span>
+                    <span data-i18n="statusOnline">Online & Ready</span>
+                </div>
+
+                <div class="avatar-actions">
+                    <button class="action-btn primary-btn" onclick="document.getElementById('fileInput').click()">
+                        <span>📤</span>
+                        <span data-i18n="changeAvatar">Change Avatar</span>
+                    </button>
+                    <button class="action-btn secondary-btn" onclick="openSettings()">
+                        <span>⚙️</span>
+                        <span data-i18n="settings">Settings</span>
+                    </button>
+                </div>
+
+                <input type="file" id="fileInput" accept="image/*" style="display: none;" onchange="handleAvatarUpload(event)">
+            </div>
+
+            <!-- Interaction Section -->
+            <div class="interaction-section">
+                <h2 class="section-title" data-i18n="interactionTitle">Interact With Your Avatar</h2>
+
+                <div class="interaction-modes">
+                    <div class="mode-card active" onclick="selectMode('voice')">
+                        <div class="mode-icon">🎤</div>
+                        <div class="mode-title" data-i18n="voiceTitle">Voice Chat</div>
+                        <div class="mode-desc" data-i18n="voiceDesc">Talk naturally with your AI friend</div>
+                    </div>
+
+                    <div class="mode-card" onclick="selectMode('text')">
+                        <div class="mode-icon">💬</div>
+                        <div class="mode-title" data-i18n="textTitle">Text Chat</div>
+                        <div class="mode-desc" data-i18n="textDesc">Type your questions and get answers</div>
+                    </div>
+
+                    <div class="mode-card" onclick="selectMode('story')">
+                        <div class="mode-icon">📚</div>
+                        <div class="mode-title" data-i18n="storyTitle">Story Time</div>
+                        <div class="mode-desc" data-i18n="storyDesc">Listen to AI stories and tales</div>
+                    </div>
+
+                    <div class="mode-card" onclick="selectMode('learn')">
+                        <div class="mode-icon">🎓</div>
+                        <div class="mode-title" data-i18n="learnTitle">Learn AI</div>
+                        <div class="mode-desc" data-i18n="learnDesc">Discover how AI works</div>
+                    </div>
+                </div>
+
+                <div class="voice-visualizer inactive" id="voiceVisualizer">
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                    <div class="voice-bar"></div>
+                </div>
+
+                <div class="control-panel">
+                    <button class="control-btn mic-btn" id="micBtn" onclick="toggleMic()">
+                        🎤
+                    </button>
+                    <button class="control-btn stop-btn" onclick="stopInteraction()">
+                        ⏹️
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const translations = {
+            ar: {
+                statusOnline: 'متصل وجاهز',
+                changeAvatar: 'تغيير الأفاتار',
+                settings: 'الإعدادات',
+                interactionTitle: 'تفاعل مع أفاتارك',
+                voiceTitle: 'محادثة صوتية',
+                voiceDesc: 'تحدث بشكل طبيعي مع صديقك الذكي',
+                textTitle: 'محادثة نصية',
+                textDesc: 'اكتب أسئلتك واحصل على إجابات',
+                storyTitle: 'وقت القصة',
+                storyDesc: 'استمع إلى قصص الذكاء الاصطناعي',
+                learnTitle: 'تعلم الذكاء الاصطناعي',
+                learnDesc: 'اكتشف كيف يعمل الذكاء الاصطناعي',
+                uploadSuccess: 'تم رفع الصورة بنجاح! 🎉',
+                uploadError: 'يرجى اختيار صورة صالحة'
+            },
+            en: {
+                statusOnline: 'Online & Ready',
+                changeAvatar: 'Change Avatar',
+                settings: 'Settings',
+                interactionTitle: 'Interact With Your Avatar',
+                voiceTitle: 'Voice Chat',
+                voiceDesc: 'Talk naturally with your AI friend',
+                textTitle: 'Text Chat',
+                textDesc: 'Type your questions and get answers',
+                storyTitle: 'Story Time',
+                storyDesc: 'Listen to AI stories and tales',
+                learnTitle: 'Learn AI',
+                learnDesc: 'Discover how AI works',
+                uploadSuccess: 'Avatar uploaded successfully! 🎉',
+                uploadError: 'Please select a valid image'
+            }
+        };
+
+        let currentLang = localStorage.getItem('appLanguage') || 'en';
+        let isMicActive = false;
+        let selectedMode = 'voice';
+
+        window.onload = function() {
+            // Load saved avatar
+            const savedAvatar = sessionStorage.getItem('selectedAvatarImage');
+            const savedName = sessionStorage.getItem('selectedAvatar') || 'Aang';
+
+            if (savedAvatar) {
+                document.getElementById('avatarImage').src = savedAvatar;
+            }
+            document.getElementById('avatarName').textContent = savedName;
+
+            updateLanguage();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('appLanguage', lang);
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+            document.getElementById('langAr').classList.toggle('active', currentLang === 'ar');
+
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    elem.textContent = translations[currentLang][key];
+                }
+            });
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('avatarImage').src = e.target.result;
+
+                    // Save to session
+                    sessionStorage.setItem('selectedAvatarImage', e.target.result);
+
+                    // Show success message
+                    alert(translations[currentLang].uploadSuccess);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                alert(translations[currentLang].uploadError);
+            }
+        }
+
+        function selectMode(mode) {
+            selectedMode = mode;
+
+            // Update UI
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+
+            // Navigate based on mode
+            if (mode === 'text') {
+                window.location.href = 'chat.html';
+            }
+        }
+
+        function toggleMic() {
+            isMicActive = !isMicActive;
+            const micBtn = document.getElementById('micBtn');
+            const visualizer = document.getElementById('voiceVisualizer');
+
+            if (isMicActive) {
+                micBtn.classList.add('active');
+                micBtn.textContent = '🔴';
+                visualizer.classList.remove('inactive');
+            } else {
+                micBtn.classList.remove('active');
+                micBtn.textContent = '🎤';
+                visualizer.classList.add('inactive');
+            }
+        }
+
+        function stopInteraction() {
+            isMicActive = false;
+            document.getElementById('micBtn').classList.remove('active');
+            document.getElementById('micBtn').textContent = '🎤';
+            document.getElementById('voiceVisualizer').classList.add('inactive');
+        }
+
+        function openSettings() {
+            alert('Settings coming soon! 🎉');
+        }
+
+        function goBack() {
+            window.location.href = 'welcome.html';
+        }
+    </script>
+</body>
+</html>

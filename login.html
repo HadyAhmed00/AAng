@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 30px;
+            padding: 50px 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .logo-title {
+            color: #fff;
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .logo-subtitle {
+            color: #94a3b8;
+            font-size: 16px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            color: #fff;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-subtext {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 35px;
+        }
+
+        .user-type-selection {
+            margin-bottom: 30px;
+        }
+
+        .selection-label {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: block;
+            text-align: center;
+        }
+
+        .user-type-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .user-type-card {
+            flex: 1;
+            background: rgba(51, 65, 85, 0.6);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 30px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .user-type-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(236, 72, 153, 0.5);
+        }
+
+        .user-type-card.selected {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(249, 115, 22, 0.2));
+            border-color: #ec4899;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .user-type-icon {
+            font-size: 50px;
+            margin-bottom: 15px;
+        }
+
+        .user-type-label {
+            color: #fff;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            color: #cbd5e1;
+            font-size: 14px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(51, 65, 85, 0.6);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 15px;
+            color: #fff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #ec4899;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .input-field::placeholder {
+            color: #64748b;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .login-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.5);
+        }
+
+        .login-button:active {
+            transform: translateY(0);
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #ec4899;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(30, 41, 59, 0.95);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+            border-radius: 50px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn:hover {
+            color: #ec4899;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+            border-color: transparent;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 40px 25px;
+            }
+
+            .user-type-options {
+                flex-direction: column;
+            }
+
+            .language-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 6px 10px;
+            }
+
+            .lang-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+        <button class="lang-btn active" onclick="changeLanguage('en')" id="langEn">EN</button>
+        <button class="lang-btn" onclick="changeLanguage('ar')" id="langAr">AR</button>
+    </div>
+    <div class="login-container">
+        <div class="logo-section">
+            <div class="logo">✨</div>
+            <div class="logo-title">Aang AI</div>
+            <div class="logo-subtitle" data-i18n="logoSubtitle">Your Smart AI Learning Companion</div>
+        </div>
+
+        <div class="welcome-text" data-i18n="welcomeText">Welcome! 👋</div>
+        <div class="welcome-subtext" data-i18n="welcomeSubtext">Choose account type to continue</div>
+
+        <div class="error-message" id="errorMessage" data-i18n="errorSelectType">
+            Please select an account type (Parent or Child)
+        </div>
+
+        <div class="user-type-selection">
+            <div class="user-type-options">
+                <div class="user-type-card" id="parentCard" onclick="selectUserType('parent')">
+                    <div class="user-type-icon">👨‍👩‍👧‍👦</div>
+                    <div class="user-type-label" data-i18n="parentLabel">Parent</div>
+                </div>
+                <div class="user-type-card" id="childCard" onclick="selectUserType('child')">
+                    <div class="user-type-icon">🧒</div>
+                    <div class="user-type-label" data-i18n="childLabel">Child</div>
+                </div>
+            </div>
+        </div>
+
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="input-group">
+                <label class="input-label" data-i18n="emailLabel">Email or Username</label>
+                <input type="text" class="input-field" id="username" data-i18n-placeholder="emailPlaceholder" placeholder="Enter your email or username" required>
+            </div>
+
+            <div class="input-group">
+                <label class="input-label" data-i18n="passwordLabel">Password</label>
+                <input type="password" class="input-field" id="password" data-i18n-placeholder="passwordPlaceholder" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="login-button" data-i18n="loginButton">
+                Login ✨
+            </button>
+        </form>
+
+        <div class="register-link">
+            <span data-i18n="registerText">Don't have an account?</span> <a href="signup.html" data-i18n="registerLink">Sign Up Now</a>
+        </div>
+    </div>
+
+    <script>
+        // Translations
+        const translations = {
+            ar: {
+                logoSubtitle: 'رفيقك الذكي لتعلم الذكاء الاصطناعي',
+                welcomeText: 'مرحباً بك! 👋',
+                welcomeSubtext: 'اختر نوع الحساب للمتابعة',
+                parentLabel: 'ولي أمر',
+                childLabel: 'طفل',
+                emailLabel: 'البريد الإلكتروني أو اسم المستخدم',
+                emailPlaceholder: 'أدخل البريد الإلكتروني أو اسم المستخدم',
+                passwordLabel: 'كلمة المرور',
+                passwordPlaceholder: 'أدخل كلمة المرور',
+                loginButton: 'دخول ✨',
+                registerText: 'ليس لديك حساب؟',
+                registerLink: 'سجل الآن',
+                errorSelectType: 'يرجى اختيار نوع الحساب (ولي أمر أو طفل)'
+            },
+            en: {
+                logoSubtitle: 'Your Smart AI Learning Companion',
+                welcomeText: 'Welcome! 👋',
+                welcomeSubtext: 'Choose account type to continue',
+                parentLabel: 'Parent',
+                childLabel: 'Child',
+                emailLabel: 'Email or Username',
+                emailPlaceholder: 'Enter your email or username',
+                passwordLabel: 'Password',
+                passwordPlaceholder: 'Enter your password',
+                loginButton: 'Login ✨',
+                registerText: "Don't have an account?",
+                registerLink: 'Sign Up Now',
+                errorSelectType: 'Please select an account type (Parent or Child)'
+            }
+        };
+
+        let selectedUserType = null;
+        let currentLang = localStorage.getItem('appLanguage') || 'en';
+
+        // Initialize language on load
+        window.onload = function() {
+            updateLanguage();
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('appLanguage', lang);
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            // Update HTML attributes
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.title = currentLang === 'ar' ? 'Aang - تسجيل الدخول' : 'Aang - Login';
+
+            // Update button states
+            document.getElementById('langEn').classList.toggle('active', currentLang === 'en');
+            document.getElementById('langAr').classList.toggle('active', currentLang === 'ar');
+
+            // Update all translatable elements
+            document.querySelectorAll('[data-i18n]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n');
+                if (translations[currentLang][key]) {
+                    if (key.includes('Title') || key.includes('Text')) {
+                        elem.innerHTML = translations[currentLang][key];
+                    } else {
+                        elem.textContent = translations[currentLang][key];
+                    }
+                }
+            });
+
+            // Update placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(elem => {
+                const key = elem.getAttribute('data-i18n-placeholder');
+                if (translations[currentLang][key]) {
+                    elem.placeholder = translations[currentLang][key];
+                }
+            });
+        }
+
+        function selectUserType(type) {
+            selectedUserType = type;
+            
+            // Remove selected class from both cards
+            document.getElementById('parentCard').classList.remove('selected');
+            document.getElementById('childCard').classList.remove('selected');
+            
+            // Add selected class to clicked card
+            if (type === 'parent') {
+                document.getElementById('parentCard').classList.add('selected');
+            } else {
+                document.getElementById('childCard').classList.add('selected');
+            }
+
+            // Hide error message
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Validate user type selection
+            if (!selectedUserType) {
+                errorMessage.textContent = translations[currentLang].errorSelectType;
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            // Store user data in sessionStorage
+            sessionStorage.setItem('userType', selectedUserType);
+            sessionStorage.setItem('username', username);
+            sessionStorage.setItem('isLoggedIn', 'true');
+
+            // Redirect to welcome page
+            window.location.href = 'welcome.html';
+        }
+
+    </script>
+</body>
+</html>

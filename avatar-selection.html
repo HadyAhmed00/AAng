@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aang - اختر أفاتارك</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .floating-buttons {
+            position: fixed;
+            top: 30px;
+            display: flex;
+            gap: 20px;
+        }
+
+        .floating-buttons.left {
+            left: 30px;
+        }
+
+        .floating-buttons.right {
+            right: 30px;
+        }
+
+        .icon-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-button {
+            background: rgba(51, 65, 85, 0.8);
+        }
+
+        .back-button:hover {
+            background: rgba(51, 65, 85, 1);
+            transform: scale(1.1);
+        }
+
+        .settings-button {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        }
+
+        .settings-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.6);
+        }
+
+        .main-avatar-section {
+            text-align: center;
+            margin: 100px 0 50px;
+        }
+
+        .main-avatar-container {
+            width: 280px;
+            height: 280px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .main-avatar-border {
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            padding: 5px;
+            box-shadow: 0 0 60px rgba(236, 72, 153, 0.6);
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 60px rgba(236, 72, 153, 0.6); }
+            50% { box-shadow: 0 0 80px rgba(236, 72, 153, 0.9); }
+        }
+
+        .main-avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #4c1d95, #1e3a8a);
+        }
+
+        .avatar-name {
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: 25px;
+            color: #fff;
+        }
+
+        .selection-section {
+            margin: 50px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 30px;
+            color: #cbd5e1;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .avatar-option {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .avatar-option-border {
+            width: 100%;
+            padding-bottom: 100%;
+            position: relative;
+            border-radius: 25px;
+            border: 3px solid rgba(148, 163, 184, 0.3);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .avatar-option:hover .avatar-option-border {
+            border-color: rgba(236, 72, 153, 0.6);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        .avatar-option.selected .avatar-option-border {
+            border-color: #ec4899;
+            border-width: 4px;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.6);
+        }
+
+        .avatar-option-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 22px;
+        }
+
+        .avatar-option-name {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #cbd5e1;
+        }
+
+        .avatar-option.selected .avatar-option-name {
+            color: #ec4899;
+        }
+
+        .language-selector {
+            background: rgba(30, 41, 59, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .language-icon {
+            font-size: 24px;
+        }
+
+        .language-label {
+            color: #cbd5e1;
+            flex: 1;
+            font-size: 16px;
+        }
+
+        .language-dropdown {
+            background: rgba(51, 65, 85, 0.8);
+            border: 2px solid rgba(148, 163, 184, 0.3);
+            border-radius: 15px;
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            min-width: 150px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: left 15px center;
+            padding-left: 40px;
+        }
+
+        .continue-section {
+            text-align: center;
+            margin: 50px 0;
+        }
+
+        .continue-button {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            padding: 18px 60px;
+            border-radius: 20px;
+            border: none;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .continue-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.6);
+        }
+
+        .save-button {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 26px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(6, 182, 212, 0.4);
+        }
+
+        .save-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .floating-buttons {
+                top: 15px;
+            }
+            
+            .floating-buttons.left {
+                left: 15px;
+            }
+            
+            .floating-buttons.right {
+                right: 15px;
+            }
+
+            .main-avatar-section {
+                margin: 80px 0 30px;
+            }
+
+            .main-avatar-container {
+                width: 220px;
+                height: 220px;
+            }
+
+            .avatar-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-buttons left">
+        <button class="icon-button back-button" onclick="goBack()">
+            ◀
+        </button>
+    </div>
+
+    <div class="floating-buttons right">
+        <button class="icon-button settings-button" onclick="alert('Settings coming soon!')">
+            ⚙️
+        </button>
+    </div>
+
+    <div class="container">
+        <div class="main-avatar-section">
+            <div class="main-avatar-container">
+                <div class="main-avatar-border">
+                    <img id="mainAvatarImage" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%235b21b6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231e3a8a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad)'/%3E%3Ccircle cx='100' cy='80' r='40' fill='%23ddd6fe'/%3E%3Cpath d='M 100 40 L 100 20 L 90 30 M 100 20 L 110 30' stroke='%23ddd6fe' stroke-width='8' fill='none'/%3E%3Cellipse cx='90' cy='75' rx='6' ry='10' fill='white'/%3E%3Cellipse cx='110' cy='75' rx='6' ry='10' fill='white'/%3E%3Cpath d='M 60 140 Q 100 180 140 140' stroke='%23ddd6fe' stroke-width='15' fill='none'/%3E%3C/svg%3E" alt="Selected Avatar" class="main-avatar-image">
+                </div>
+            </div>
+            <div class="avatar-name" id="avatarName">Aang</div>
+        </div>
+
+        <div class="selection-section">
+            <h2 class="section-title">Or Choose Another Avatar</h2>
+            
+            <div class="avatar-grid">
+                <div class="avatar-option selected" data-avatar="Aang" onclick="selectAvatar(this, 'Aang')">
+                    <div class="avatar-option-border">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad1' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23c2410c;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23f97316;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad1)'/%3E%3Ccircle cx='100' cy='80' r='35' fill='%23fbbf24'/%3E%3Cpath d='M 100 45 L 100 25' stroke='%23fbbf24' stroke-width='6' fill='none'/%3E%3Ccircle cx='90' cy='75' r='5' fill='%23422006'/%3E%3Ccircle cx='110' cy='75' r='5' fill='%23422006'/%3E%3Cpath d='M 85 90 Q 100 100 115 90' stroke='%23422006' stroke-width='3' fill='none'/%3E%3Cpath d='M 60 130 L 70 140 L 80 130 M 120 130 L 130 140 L 140 130' stroke='%23fbbf24' stroke-width='4' fill='none'/%3E%3C/svg%3E" alt="Aang" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Aang</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Kitara" onclick="selectAvatar(this, 'Kitara')">
+                    <div class="avatar-option-border">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad2' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%233b82f6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2306b6d4;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad2)'/%3E%3Ccircle cx='100' cy='80' r='35' fill='%23a78bfa'/%3E%3Cpath d='M 70 60 Q 80 50 90 60 M 110 60 Q 120 50 130 60' stroke='%23581c87' stroke-width='3' fill='none'/%3E%3Ccircle cx='88' cy='75' r='4' fill='%23581c87'/%3E%3Ccircle cx='112' cy='75' r='4' fill='%23581c87'/%3E%3Cpath d='M 85 90 Q 100 98 115 90' stroke='%23ec4899' stroke-width='3' fill='none'/%3E%3Cpath d='M 80 110 L 75 150 M 120 110 L 125 150' stroke='%23a78bfa' stroke-width='8' fill='none'/%3E%3C/svg%3E" alt="Kitara" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Kitara</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Danty" onclick="selectAvatar(this, 'Danty')">
+                    <div class="avatar-option-border">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad3' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23475569;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231e293b;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad3)'/%3E%3Ccircle cx='100' cy='80' r='35' fill='%23cbd5e1'/%3E%3Cpath d='M 75 65 L 80 60 L 85 65 M 115 65 L 120 60 L 125 65' stroke='%23475569' stroke-width='3' fill='none'/%3E%3Ccircle cx='88' cy='78' r='5' fill='%2364748b'/%3E%3Ccircle cx='112' cy='78' r='5' fill='%2364748b'/%3E%3Cpath d='M 85 92 L 115 92' stroke='%23475569' stroke-width='3'/%3E%3Crect x='80' y='110' width='40' height='60' fill='%23cbd5e1' rx='5'/%3E%3C/svg%3E" alt="Danty" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Danty</div>
+                </div>
+
+                <div class="avatar-option" data-avatar="Your Avatar" onclick="selectAvatar(this, 'Your Avatar')">
+                    <div class="avatar-option-border">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad4' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23fbbf24;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23f59e0b;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad4)'/%3E%3Ccircle cx='100' cy='85' r='38' fill='%23fef3c7'/%3E%3Cpath d='M 70 70 Q 80 65 85 70 M 115 70 Q 120 65 130 70' stroke='%2392400e' stroke-width='3' fill='none'/%3E%3Ccircle cx='87' cy='80' r='5' fill='%23451a03'/%3E%3Ccircle cx='113' cy='80' r='5' fill='%23451a03'/%3E%3Cpath d='M 82 100 Q 100 110 118 100' stroke='%23ec4899' stroke-width='4' fill='none'/%3E%3Cpath d='M 75 65 Q 100 50 125 65' stroke='%23451a03' stroke-width='5' fill='none'/%3E%3Ccircle cx='100' cy='160' r='15' fill='%23ec4899'/%3E%3Ctext x='100' y='168' text-anchor='middle' fill='white' font-size='18' font-weight='bold'%3E%2B%3C/text%3E%3C/svg%3E" alt="Your Avatar" class="avatar-option-image">
+                    </div>
+                    <div class="avatar-option-name">Your Avatar</div>
+                </div>
+            </div>
+
+            <div class="language-selector">
+                <span class="language-icon">🌐</span>
+                <span class="language-label">Language:</span>
+                <select class="language-dropdown" id="languageSelect">
+                    <option value="ar">العربية</option>
+                    <option value="en" selected>English</option>
+                    <option value="fr">Français</option>
+                    <option value="es">Español</option>
+                    <option value="de">Deutsch</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="continue-section">
+            <button class="continue-button" onclick="continueWithAvatar()">
+                ▶ Continue With <span id="selectedAvatarName">Aang</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let selectedAvatarData = {
+            name: 'Aang',
+            image: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cdefs%3E%3ClinearGradient id='grad' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%235b21b6;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231e3a8a;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='200' height='200' fill='url(%23grad)'/%3E%3Ccircle cx='100' cy='80' r='40' fill='%23ddd6fe'/%3E%3Cpath d='M 100 40 L 100 20 L 90 30 M 100 20 L 110 30' stroke='%23ddd6fe' stroke-width='8' fill='none'/%3E%3Cellipse cx='90' cy='75' rx='6' ry='10' fill='white'/%3E%3Cellipse cx='110' cy='75' rx='6' ry='10' fill='white'/%3E%3Cpath d='M 60 140 Q 100 180 140 140' stroke='%23ddd6fe' stroke-width='15' fill='none'/%3E%3C/svg%3E"
+        };
+
+        function selectAvatar(element, avatarName) {
+            // Remove selected class from all avatars
+            document.querySelectorAll('.avatar-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+
+            // Add selected class to clicked avatar
+            element.classList.add('selected');
+
+            // Update main avatar display
+            const avatarImage = element.querySelector('.avatar-option-image').src;
+            document.getElementById('mainAvatarImage').src = avatarImage;
+            document.getElementById('avatarName').textContent = avatarName;
+            document.getElementById('selectedAvatarName').textContent = avatarName;
+
+            // Store selected avatar data
+            selectedAvatarData = {
+                name: avatarName,
+                image: avatarImage
+            };
+        }
+
+        function goBack() {
+            window.location.href = 'welcome.html';
+        }
+
+        function continueWithAvatar() {
+            // Save selected avatar to session storage
+            sessionStorage.setItem('selectedAvatar', selectedAvatarData.name);
+            sessionStorage.setItem('selectedAvatarImage', selectedAvatarData.image);
+            sessionStorage.setItem('selectedLanguage', document.getElementById('languageSelect').value);
+
+            // Redirect to chat page
+            window.location.href = 'chat.html';
+        }
+
+        // Check if user is logged in
+        window.onload = function() {
+            if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>
